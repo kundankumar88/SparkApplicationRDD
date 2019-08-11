@@ -9,11 +9,12 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-public class PrintingRDD {
-	
+import scala.Tuple2;
+
+public class NumberOfRecordCountsInRDD {
+
 	public static void main(String[] args) {
-		
-		SparkConf config=new SparkConf().setAppName("printingRDD").setMaster("local[2]");
+		SparkConf config=new SparkConf().setAppName("mappingApplication").setMaster("local[2]");
 		Logger.getLogger("org.apache").setLevel(Level.WARN);
 		
 		JavaSparkContext sc=new JavaSparkContext(config);
@@ -27,21 +28,18 @@ public class PrintingRDD {
 		
 		JavaRDD<Integer> myRDD=sc.parallelize(listOfNumbers);
 		
-		JavaRDD<Double> squareRootRDD;
+		//Mapper Code
+		JavaRDD<Long> countMapRDD=myRDD.map(eachElement->1L);
 		
-		squareRootRDD=myRDD.map(eachValue-> Math.sqrt(eachValue));
+		//Reducer Code 
+		Long countValue=countMapRDD.reduce((x,y)->x+y);
 		
-		System.out.println("RDD Created by ");
-		
-		squareRootRDD.foreach(val->System.out.println(val));
-		
-		
+		System.out.println(countValue);
 		
 		
 		
 		
-		
-			
-		}
+
+	}
 
 }

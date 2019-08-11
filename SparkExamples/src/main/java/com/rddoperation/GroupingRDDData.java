@@ -1,4 +1,4 @@
-package com.rddcreation.mapping;
+package com.rddoperation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,14 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-public class PrintingRDD {
+import com.rddoperation.util.SquareRootHolderClass;
+
+public class GroupingRDDData {
 	
+	//This Program is created to accomodate two /more values in RDD like HashMap like Key Value Pairs
+	//Also This program should be done with Tuple 2 but its just created so that we know that there is an alternate for tuples
+	
+
 	public static void main(String[] args) {
 		
 		SparkConf config=new SparkConf().setAppName("printingRDD").setMaster("local[2]");
@@ -27,21 +33,19 @@ public class PrintingRDD {
 		
 		JavaRDD<Integer> myRDD=sc.parallelize(listOfNumbers);
 		
-		JavaRDD<Double> squareRootRDD;
+		SquareRootHolderClass starrRootObj=new SquareRootHolderClass();
 		
-		squareRootRDD=myRDD.map(eachValue-> Math.sqrt(eachValue));
+		JavaRDD<SquareRootHolderClass> squareRootHolderRDD=myRDD.map(eachListValue-> new SquareRootHolderClass(new Double(eachListValue)));
 		
-		System.out.println("RDD Created by ");
-		
-		squareRootRDD.foreach(val->System.out.println(val));
-		
+		//Printing Each SquareRootHolder RDD
+		squareRootHolderRDD.foreach(eachObject->System.out.println("Number"+eachObject.getMainNumber()+" Square Roots"+eachObject.getSquareRoot()));
 		
 		
-		
+		sc.close();
 		
 		
 		
-			
-		}
+
+	}
 
 }
