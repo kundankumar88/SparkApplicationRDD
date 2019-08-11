@@ -41,7 +41,7 @@ public class GroupingRDDData {
 		squareRootHolderRDD.foreach(eachObject->System.out.println("Number"+eachObject.getMainNumber()+" Square Roots"+eachObject.getSquareRoot()));
 		
 		
-		
+		sc.close();
 		
 		
 		
