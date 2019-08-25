@@ -1,7 +1,8 @@
 package com.SparkReal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Level;
@@ -22,20 +23,14 @@ public class App
 {
     public static void main( String[] args )
     {
-    	SparkConf config=new SparkConf().setAppName("realApplication");
-    	Logger.getLogger("org.apache").setLevel(Level.WARN);
-		//Logger.getLogger("org.apache").setLevel(Level.WARN);
+    	SparkConf config=new SparkConf().setAppName("realApplication").setMaster("local[*]");
+		Logger.getLogger("org.apache").setLevel(Level.WARN);
 		
 		JavaSparkContext sc=new JavaSparkContext(config);
-		System.out.println("Conf is Ready");
-		Set<String> setOfBoring=new HashSet<>();
-		setOfBoring.add("the");
-		setOfBoring.add("on");
 		
-		System.out.println("setOfBoring"+setOfBoring);
+		/*Set<String> setOfBoring=	Util.borings;*/
 		
-		JavaRDD<String> fileInitialRDD=sc.textFile("s3://kundanbucket2//input.txt");
-		System.out.println("Got Bucket");
+		JavaRDD<String> fileInitialRDD=sc.textFile("resources/input.txt");
 		
 		JavaRDD<String> formattedString=fileInitialRDD.map(str->str.replaceAll("[^a-zA-Z]", " "));
 		
@@ -43,7 +38,7 @@ public class App
 		
 		JavaRDD<String> splittedFlatRDD=formattedString.flatMap(str->Arrays.asList(str.toLowerCase().split(" ")).iterator() );
 		
-		JavaRDD<String> notBoringRDD=splittedFlatRDD.filter(eachValue->!setOfBoring.contains(eachValue) && eachValue.trim().length()>0 );
+		JavaRDD<String> notBoringRDD=splittedFlatRDD.filter(eachValue->Util.isNotBoring(eachValue) && eachValue.trim().length()>0 );
 		
 		JavaPairRDD<String, Integer> mappingNonBoring=notBoringRDD.mapToPair(new PairFunction<String, String, Integer>() {
 
@@ -69,7 +64,7 @@ public class App
 		JavaPairRDD<Integer,String> wordCountByKey=eachReverseMapper.mapToPair(eachTuple->new Tuple2<Integer,String>(eachTuple._2, eachTuple._1));
 		
 		wordCountByKey=wordCountByKey.sortByKey(false);
-		System.out.println(wordCountByKey.take(100));
+		System.out.println(wordCountByKey.take(10000));
 		
 		
 		

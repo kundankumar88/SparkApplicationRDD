@@ -61,6 +61,7 @@ public class SparkJoins {
 		JavaPairRDD<Integer, Tuple2<Optional<String>, String>> rightOuterJoinData = rdd1.rightOuterJoin(rdd2);
 		System.out.println("Right Outer Join Example");
 		rightOuterJoinData.foreach(eachData->System.out.println(eachData));
+		
 	
 		
 		
